@@ -1,4 +1,4 @@
-import { isIP, SocketAddress } from 'node:net';
+import { isIP } from 'node:net';
 
 const networks = {
   US: {
@@ -39,7 +39,7 @@ const hosting = {
 
 function reverseName(ip, version) {
   if (version === 4) return ip.split('.').reverse().join('.') + '.in-addr.arpa';
-  const address = new SocketAddress({address: ip, family: 'ipv6'}).address;
+  const address = new URL('http://[' + ip + ']').hostname.slice(1, -1);
   const [head, tail] = address.split('::');
   const left = head ? head.split(':') : [];
   const right = tail ? tail.split(':') : [];
@@ -63,9 +63,18 @@ export async function onRequestPost({ request }) {
   if (raw.length > 12000) return Response.json({error:'补充内容过长。'}, {status:413});
   let body;
   try { body = JSON.parse(raw); } catch { return Response.json({error:'请求格式无效。'}, {status:400}); }
-  const ip = typeof body?.ip === 'string' ? body.ip.trim() : '';
-  const version = ip.includes('%') ? 0 : isIP(ip);
+  let ip = typeof body?.ip === 'string' ? body.ip.trim() : '';
+  let version = ip.includes('%') ? 0 : isIP(ip);
   if (!version) return Response.json({error:'请输入有效的 IPv4 或 IPv6 地址。'}, {status:400});
+  if (version === 6) {
+    const normalized = new URL('http://[' + ip + ']').hostname.slice(1, -1);
+    const mapped = /^::ffff:([a-f\d]+):([a-f\d]+)$/.exec(normalized);
+    if (mapped) {
+      const [high, low] = mapped.slice(1).map(group => parseInt(group, 16));
+      ip = [high >> 8, high & 255, low >> 8, low & 255].join('.');
+      version = 4;
+    }
+  }
   const reverse = reverseName(ip, version);
   const [route, dns, geo] = await Promise.all([
     lookup('https://stat.ripe.net/data/network-info/data.json', {resource:ip}),
