@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>住宅 IP 验纯</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header>住宅 IP 验证</header>
+  <main>
+    <h1>住宅 IP 验纯</h1>
+    <p class="intro">核验美国、英国、德国和香港的住宅宽带 IP</p>
+    <form class="panel">
+      <label for="ip">公网 IP 地址</label>
+      <div class="controls">
+        <input id="ip" name="ip" placeholder="请输入 IPv4 或 IPv6 地址，例如 8.8.8.8" required maxlength="45" spellcheck="false" autocapitalize="off">
+        <button>开始检测</button>
+      </div>
+      <details>
+        <summary>补充 WHOIS 或路由证据</summary>
+        <textarea name="details" aria-label="WHOIS 或 traceroute 原文" maxlength="2000" rows="4" placeholder="粘贴 WHOIS 或 traceroute 原文"></textarea>
+      </details>
+      <p id="message" role="status" hidden></p>
+    </form>
+    <section id="report" class="panel" aria-labelledby="verdict" aria-live="polite" hidden>
+      <h2 id="verdict"></h2>
+      <p id="ownership"></p>
+      <dl>
+        <div><dt>ASN 匹配</dt><dd id="asn"></dd></div>
+        <div><dt>PTR 特征</dt><dd id="ptr"></dd></div>
+        <div><dt>路由 / WHOIS</dt><dd id="route"></dd></div>
+        <div><dt>风控与使用建议</dt><dd id="advice"></dd></div>
+      </dl>
+      <pre id="details" hidden></pre>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,4 @@
+name = "residential-ip-check"
+pages_build_output_dir = "./public"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
