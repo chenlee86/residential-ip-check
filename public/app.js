@@ -2,12 +2,19 @@ const form = document.querySelector('form');
 const button = form.querySelector('button');
 const message = document.querySelector('#message');
 const report = document.querySelector('#report');
+const toggle = document.querySelector('#toggle-evidence');
+const evidence = document.querySelector('#evidence');
+
+toggle.addEventListener('click', () => {
+  evidence.hidden = !evidence.hidden;
+  toggle.setAttribute('aria-expanded', String(!evidence.hidden));
+});
 
 const verdicts = {
-  residential: '✅ 符合原生家宽特征',
-  business: '⚠️ 商业宽带（商宽）',
-  hosting: '❌ 机房或托管网络',
-  unknown: '❓ 信息不足待补充',
+  residential: '符合原生家宽特征',
+  business: '商业宽带（商宽）',
+  hosting: '机房或托管网络',
+  unknown: '信息不足待补充',
 };
 const regions = new Intl.DisplayNames(['zh-CN'], {type:'region'});
 
@@ -33,7 +40,10 @@ form.addEventListener('submit', async event => {
     const asn = result.asns.map(value => 'AS' + value).join(' / ') || 'ASN 未知';
     const fields = {
       verdict: verdicts[result.status],
-      ownership: result.ip + ' · ' + region + ' · ' + result.operator + ' (' + asn + ')',
+      'result-ip': result.ip,
+      region,
+      operator: result.operator,
+      'origin-asn': asn,
       asn: result.asnEvidence,
       ptr: result.ptrEvidence,
       route: result.routeEvidence,
@@ -42,6 +52,7 @@ form.addEventListener('submit', async event => {
     };
     for (const [id, value] of Object.entries(fields)) document.getElementById(id).textContent = value;
     document.querySelector('#details').hidden = !result.details;
+    report.dataset.status = result.status;
     report.hidden = false;
     message.hidden = true;
   } catch {

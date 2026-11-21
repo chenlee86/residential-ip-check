@@ -8,26 +8,27 @@
   <script src="/app.js" defer></script>
 </head>
 <body>
-  <header>住宅 IP 验证</header>
+  <header><h1>住宅 IP 验纯</h1><span>美国 · 英国 · 德国 · 香港</span></header>
   <main>
-    <h1>住宅 IP 验纯</h1>
-    <p class="intro">核验美国、英国、德国和香港的住宅宽带 IP</p>
     <form class="panel">
-      <label for="ip">公网 IP 地址</label>
       <div class="controls">
+        <label for="ip">公网 IP 地址</label>
         <input id="ip" name="ip" placeholder="请输入 IPv4 或 IPv6 地址，例如 8.8.8.8" required maxlength="45" spellcheck="false" autocapitalize="off">
-        <button>开始检测</button>
+        <button>查询 IP</button>
+        <button type="button" id="toggle-evidence" aria-controls="evidence" aria-expanded="false">补充 WHOIS 或路由证据</button>
       </div>
-      <details>
-        <summary>补充 WHOIS 或路由证据</summary>
+      <div id="evidence" hidden>
         <textarea name="details" aria-label="WHOIS 或 traceroute 原文" maxlength="2000" rows="4" placeholder="粘贴 WHOIS 或 traceroute 原文"></textarea>
-      </details>
+      </div>
       <p id="message" role="status" hidden></p>
     </form>
-    <section id="report" class="panel" aria-labelledby="verdict" aria-live="polite" hidden>
-      <h2 id="verdict"></h2>
-      <p id="ownership"></p>
+    <section id="report" class="panel" aria-labelledby="report-title" aria-live="polite" hidden>
+      <h2 id="report-title">IP 检测报告</h2>
+      <div class="result-header"><strong id="result-ip"></strong><span id="verdict"></span></div>
       <dl>
+        <div><dt>归属地区</dt><dd id="region"></dd></div>
+        <div><dt>运营商</dt><dd id="operator"></dd></div>
+        <div><dt>起源 ASN</dt><dd id="origin-asn"></dd></div>
         <div><dt>ASN 匹配</dt><dd id="asn"></dd></div>
         <div><dt>PTR 特征</dt><dd id="ptr"></dd></div>
         <div><dt>路由 / WHOIS</dt><dd id="route"></dd></div>
